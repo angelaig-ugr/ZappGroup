@@ -11,3 +11,7 @@ Poneros en la carpeta donde tengais el fichero environment.yml o cambias la ruta
 
 Si acabas de instalar conda, añade esto al .bashrc (solo ubuntu):
 export PATH=~/anaconda3/bin:$PATH
+
+#Ejecución
+En el directorio app externo:
+python manage.py runserver
