@@ -17,8 +17,5 @@ class Usuario(models.Model):
 	categoria = models.CharField(choices=OPCIONES, max_length=200, default=ALUMNO)
 
 
-    def __str__(self):
-        return str(self.id) + '-' + self.nombre + '-' + '-' + self.caracter + '-' self.email
-
-     def is_profesional():
-     	if
+#def __str__(self):
+#    return str(self.id) + '-' + self.nombre + '-' + '-' + self.caracter + '-' self.email

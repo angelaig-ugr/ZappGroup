@@ -10,8 +10,8 @@ def verPerfil(request, idUsuario):
     context = {'perfil': perfil}
     return render(request, 'perfil.html', context)
 
-def crearUsuario(request, nuevo_nombre, nuevo_email, nuevo_coordinador, nuevo_edad):
-    Usuario.objects.create(nombre = nuevo_nombre,
-                email=nuevo_email,
-                coordinador=nuevo_coodinador,
-                edad = nueva_edad)
+def crearUsuario(request, n_nombre, n_email, n_coordinador, n_edad):
+    Usuario.objects.create(nombre = n_nombre,
+                email=n_email,
+                coordinador=n_coodinador,
+                edad = n_edad)
