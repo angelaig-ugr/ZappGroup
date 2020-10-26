@@ -7,7 +7,7 @@ class Usuario(models.Model):
 	email = models.EmailField(max_length=100)
 	usuarioAsociado = models.ListCharField(CharField)
 	edad = models.IntegerField()
-	foto = models.ImageField(upload_to=None, height_field=None, width_field=None, max_length=100)
+	foto = models.ImageField(upload_to=None, height_field=None, width_field=None, max_length=100, blank=True)
 	ALUMNO = 'Alumno'
 	PROFESIONAL = 'Profesional'
 	OPCIONES = [
