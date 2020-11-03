@@ -25,7 +25,7 @@ SECRET_KEY = 'u!!vj0anw9$7-8u161kg6c#c2uyj0=fivn=v809v(g%z(l58fd'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['zapp.pythonanywhere.com', 'localhost']
 
 
 # Application definition
