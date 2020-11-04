@@ -32,8 +32,9 @@ ALLOWED_HOSTS = ['zapp.pythonanywhere.com', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
-    'gestionUsuario',
-    'actividades',
+    #'gestionUsuario',
+    #'actividades',
+    'app',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
