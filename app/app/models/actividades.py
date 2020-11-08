@@ -1,5 +1,5 @@
 from django.db import models
-from app.models import Usuario, Profesional
+from app.models.gestionUsuario import Usuario, Profesional
 import datetime
 
 # Create your models here.
