@@ -1,5 +1,5 @@
 from django.db import models
-from app.models.gestionUsuario import Usuario, Profesional
+from app.models.gestionUsuario import User
 import datetime
 
 # Create your models here.
@@ -11,8 +11,8 @@ class Categoria(models.Model):
 	#pictograma=models.ImageField(upload_to=None, height_field=None, width_field=None, max_length=100)
 
 class Actividad(models.Model):
-	idUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-	idProfesional = models.ForeignKey(Profesional, on_delete=models.CASCADE)
+	idUsuario = models.ForeignKey(User, on_delete=models.CASCADE)
+	idProfesional = models.ForeignKey(User, on_delete=models.CASCADE)
 	categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE,default=None)
 	descripcion = models.CharField(max_length=5000, blank=True)
 	video = models.URLField(blank=True)

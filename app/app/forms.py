@@ -35,7 +35,7 @@ class ProfesionalForm(forms.ModelForm):
 class NuevoUsuarioForm(forms.ModelForm):
     class Meta:
         model = Usuario
-        fields = ['nombre', 'email', 'fechaNacimiento', 'foto', 'coordinador']
+        fields = ['username', 'first_name', 'last_name', 'f', 'coordinador']
 
     def clean(self):
         cleaned_data = self.cleaned_data
