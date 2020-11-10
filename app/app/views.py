@@ -2,8 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 import datetime
 
-from actividades import *
-from forms import *
+from app.forms import *
 # Create your views here.
 
 
@@ -72,37 +71,78 @@ def verActividadesUsuario(request, id):
     context = {'actividad': actividad}
     return render(request, 'actividades/verActividadesUsuario.html', context)
 
-def verPerfilUsuario(request, idUsuario):
-    usuario = Usuario.objects.get(id=idUsuario)
+def verPerfil(request, id):
+    usuario = User.objects.get(id=id)
     context = {'perfil': perfil}
     return render(request, 'perfil.html', context)
 
-def verPerfilProfesional(request, idProfesional):
-    profesional = Profesional.objects.get(id=idUsuario)
-    context = {'perfil': perfil}
-    return render(request, 'perfil.html', context)
 
 def nuevoUsuario(request):
     if request.method == "POST":
         form = NuevoUsuarioForm(request.POST, request.FILES)
         if form.is_valid():
+
             form.save()
-            return HttpResponseRedirect('/usuarios')
+            login(request, user)
+
+            return HttpResponseRedirect('/bienvenido')
     else:
         form = NuevoUsuarioForm()
 
-    return render(request, 'actividades/nuevoUsuario.html', {'form': form})
+    return render(request, 'nuevoUsuario.html', {'form': form})
 
-def nuevoUsuario(request):
+def bienvenido():
+    return render('bienvenido.html')
+
+def loginSocio(request):
+    form = LoginSocioForm()
     if request.method == "POST":
-        form = NuevoProfesionalForm(request.POST, request.FILES)
+        # Añadimos los datos recibidos al formulario
+        form = LoginSocioForm(data=request.POST)
+        # Si el formulario es válido...
         if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/usuarios')
-    else:
-        form = NuevoProfesionalForm()
+            # Recuperamos las credenciales validadas
+            username = form.cleaned_data['username']
 
-    return render(request, 'actividades/nuevoProfesional.html', {'form': form})
+            # Verificamos las credenciales del usuario
+            user = authenticate(username=username, password=username)
 
-def loginUsuario(request):
-    if request.method == 'POST':
+            # Si existe un usuario con ese nombre y contraseña
+            if user is not None:
+                # Hacemos el login manualmente
+                login(request, user)
+                # Y le redireccionamos a la portada
+                return redirect('/')
+
+    # Si llegamos al final renderizamos el formulario
+    return render(request, "loginSocio.html", {'form': form})
+
+def loginVoluntario(request):
+    form = LoginVoluntarioForm()
+    if request.method == "POST":
+        # Añadimos los datos recibidos al formulario
+        form = LoginVoluntarioForm(data=request.POST)
+        # Si el formulario es válido...
+        if form.is_valid():
+            # Recuperamos las credenciales validadas
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+
+            # Verificamos las credenciales del usuario
+            user = authenticate(username=username, password=password)
+
+            # Si existe un usuario con ese nombre y contraseña
+            if user is not None:
+                # Hacemos el login manualmente
+                do_login(request, user)
+                # Y le redireccionamos a la portada
+                return redirect('/')
+
+    # Si llegamos al final renderizamos el formulario
+    return render(request, "loginVoluntario.html", {'form': form})
+
+def logout(request):
+    # Finalizamos la sesión
+    do_logout(request)
+    # Redireccionamos a la portada
+    return redirect('/')

@@ -7,10 +7,10 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
 	#Abstract user ya tiene los campos: username, first_name, last_name, email,
 	#  password (que sea el mismo que el username para los socios), last_login etc
-	fechaNacimiento = models.DateField(auto_now=False, auto_now_add=False)
-	es_socio = models.BooleanField(default=False)
-	foto = models.ImageField(upload_to=None, height_field=None, width_field=None, max_length=100, blank=True)
-	coordinador = models.ForeignKey(Usuario, on_delete=models.CASCADE, blank=True) #solo los socios, se pone a si mismo
+	fechaNacimiento = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
+	#is_staff esta ya en abstract user y si es True es coordinador y False es socio
+	foto = models.ImageField(upload_to=None, height_field=None, width_field=None, max_length=100, blank=True, null=True)
+	coordinador = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True) #solo los socios, se pone a si mismo
 
 '''
 

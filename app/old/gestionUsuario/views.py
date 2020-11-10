@@ -6,7 +6,7 @@ from gestionUsuario.models import *
 
 
 def verPerfil(request, idUsuario):
-    usuario = Usuario.objects.get(id=idUsuario)
+    usuario = Us.objects.get(id=idUsuario)
     context = {'perfil': perfil}
     return render(request, 'perfil.html', context)
 

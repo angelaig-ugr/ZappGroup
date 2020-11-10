@@ -1,2 +1,2 @@
-from .gestionUsuario import Usuario, Profesional
+from .gestionUsuario import User
 from .actividades import Categoria, Actividad
