@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ['zapp.pythonanywhere.com', 'localhost', '127.0.0.1']
 INSTALLED_APPS = [
     #'gestionUsuario',
     #'actividades',
+    'rest_framework',
     'app',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -123,3 +124,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 AUTH_USER_MODEL = 'app.User'
+
+
+## Cosas del framework rest API
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}

@@ -16,9 +16,14 @@ Including another URLconf
 
 
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import include, path, re_path
 from . import views
+from rest_framework import routers
 
+
+#### Cosas del rest framework ###
+router = routers.DefaultRouter()
+router.register(r'usersCARMEN', views.UserViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,5 +38,6 @@ urlpatterns = [
     re_path(r'^eliminarActividad/(?P<id>[0-9]+)$', views.eliminarActividad, name='eliminarActividad'),
     re_path(r'^verActividad/(?P<id>[0-9]+)$', views.verActividad, name='verActividad'),
     re_path(r'^verActividadesUsuario/(?P<id>[0-9]+)$', views.verActividadesUsuario, name='verActividadesUsuario'),
-
+    path('', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

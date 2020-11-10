@@ -5,6 +5,12 @@ import datetime
 from app.forms import *
 # Create your views here.
 
+#imports de serialziers
+from .serializers import UserSerializer
+from rest_framework import viewsets, permissions
+from .models import User
+########
+
 
 def indexActividad(request):
     return HttpResponseRedirect('/actividades/index.html')
@@ -46,7 +52,7 @@ def modificarActividad(request, id):
                 activ.pdf = form['pdf']
             if form['comentario']:
                 activ.comentario = form['comentario']
-            
+
             activ.save()
 
             return HttpResponseRedirect(request.build_absolute_uri())
@@ -146,3 +152,14 @@ def logout(request):
     do_logout(request)
     # Redireccionamos a la portada
     return redirect('/')
+
+
+
+###------Cosas de REST FRAMEWORK API ----- #####
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
