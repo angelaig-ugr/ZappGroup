@@ -20,10 +20,13 @@ from django.urls import include, path, re_path
 from . import views
 from rest_framework import routers
 
+from .views import *
+
 
 #### Cosas del rest framework ###
 router = routers.DefaultRouter()
-router.register(r'usersCARMEN', views.UserViewSet)
+router.register(r'getAllUsers', views.UserViewSet)
+#router.register(r'hello', views.hello_world)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -39,5 +42,7 @@ urlpatterns = [
     re_path(r'^verActividad/(?P<id>[0-9]+)$', views.verActividad, name='verActividad'),
     re_path(r'^verActividadesUsuario/(?P<id>[0-9]+)$', views.verActividadesUsuario, name='verActividadesUsuario'),
     path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('allActividades/', ActividadView.as_view()),
+    path('actividad/<int:pk>', ActividadView.as_view())
 ]

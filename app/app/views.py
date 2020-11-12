@@ -6,9 +6,12 @@ from app.forms import *
 # Create your views here.
 
 #imports de serialziers
-from .serializers import UserSerializer
+from .serializers import *
 from rest_framework import viewsets, permissions
+from rest_framework.decorators import api_view
 from .models import User
+from rest_framework.views import APIView
+from rest_framework.response import Response
 ########
 
 
@@ -163,3 +166,16 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+class ActividadView(APIView):
+    def get(self, request):
+        actividades = Actividad.objects.all()
+        # the many param informs the serializer that it will be serializing more than a single article.
+        serializer = ActividadSerializer(actividades, many=True)
+        return Response({"actividades": serializer.data, "prueba": None})
+
+    def get(self, request, pk):
+        actividades = Actividad.objects.all()
+        # the many param informs the serializer that it will be serializing more than a single article.
+        serializer = ActividadSerializer(actividades, many=True)
+        return Response({"pruebaconPK": None})
