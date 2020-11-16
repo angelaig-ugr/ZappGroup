@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 import datetime
 
@@ -159,6 +159,8 @@ def logout(request):
 
 
 ###------Cosas de REST FRAMEWORK API ----- #####
+# Con APIView mapeamos funciones a métodos de HTTP (GET, POST, ...)
+
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -167,15 +169,88 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-class ActividadView(APIView):
-    def get(self, request):
-        actividades = Actividad.objects.all()
-        # the many param informs the serializer that it will be serializing more than a single article.
-        serializer = ActividadSerializer(actividades, many=True)
-        return Response({"actividades": serializer.data, "prueba": None})
+class UserView(APIView):
+
+    @api_view(['GET'])
+    def login(request):
+        return Response({"Holis": "Heyyyyyyy"})
 
     def get(self, request, pk):
-        actividades = Actividad.objects.all()
+        if(pk == 0):
+            usuario = User.objects.all()
+            serializer = UserSerializer(usuario, many=True)
+        else:
+            usuario = User.objects.get(pk = pk)
+            serializer = UserSerializer(usuario, many=False)
+
+        return Response({"User": serializer.data})
+    
+    def post(self, request):
+        usuario = request.data.get('user')
+
+        # Create an article from the above data
+        serializer = UserSerializer(data=usuario)
+        if serializer.is_valid(raise_exception=True):
+            user_saved = serializer.save()
+        return Response({"success": "User '{}' created successfully".format(user_saved.username)})
+    
+    def put(self, request, pk):
+        saved_user = get_object_or_404(User.objects.all(), pk=pk)
+        data = request.data.get('user')
+        serializer = UserSerializer(instance=saved_user, data=data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            user_saved = serializer.save()
+        return Response({"success": "User '{}' updated successfully".format(user_saved.username)})
+
+    def delete(self, request, pk):
+        # Get object with this pk
+        user = get_object_or_404(User.objects.all(), pk=pk)
+        user.delete()
+        return Response({"message": "User with id `{}` has been deleted.".format(pk)},status=204)
+
+
+class ActividadView(APIView):
+    
+    # Aqui lo suyo es que si pk es algún valor especial devolvamos todas las tareas
+    def get(self, request, pk):
+        if(pk == "all"):
+            actividades = Actividad.objects.all()
         # the many param informs the serializer that it will be serializing more than a single article.
         serializer = ActividadSerializer(actividades, many=True)
-        return Response({"pruebaconPK": None})
+        return Response({"pruebaconPK": serializer.data})
+
+class ActividadUsuarioView(APIView):
+
+    def get(self, request, pk):
+        if(pk == 0):
+            actividades = Actividad.objects.all()
+            serializer = ActividadSerializer(actividades, many=True)
+        else:
+            actividades = Actividad.objects.get(pk= pk)
+            serializer = ActividadSerializer(actividades, many=True)
+
+        return Response({"Actividad": serializer.data})
+
+    def post(self, request):
+        actividad = request.data.get('actividad')
+
+        # Create an article from the above data
+        serializer = ActividadSerializer(data=actividad)
+        if serializer.is_valid(raise_exception=True):
+            actividad_saved = serializer.save()
+        return Response({"success": "Actividad with id '{}' created successfully".format(actividad_saved.pk)})
+    
+    def put(self, request, pk):
+        saved_actividad = get_object_or_404(Actividad.objects.all(), pk=pk)
+        data = request.data.get('actividad')
+        serializer = ActividadSerializer(instance=saved_actividad, data=data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            actividad_saved = serializer.save()
+        return Response({"success": "Actividad with id'{}' updated successfully".format(pk)})
+
+    def delete(self, request, pk):
+        # Get object with this pk
+        actividad = get_object_or_404(Actividad.objects.all(), pk=pk)
+        actividad.delete()
+        return Response({"message": "Actividad with id `{}` has been deleted.".format(pk)},status=204)
+    
