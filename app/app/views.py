@@ -161,23 +161,59 @@ def logout(request):
 ###------Cosas de REST FRAMEWORK API ----- #####
 # Con APIView mapeamos funciones a métodos de HTTP (GET, POST, ...)
 
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+# class UserViewSet(viewsets.ModelViewSet):
+#     """
+#     API endpoint that allows users to be viewed or edited.
+#     """
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+#     permission_classes = [permissions.IsAuthenticated]
 
-class UserView(APIView):
+class SocioView(APIView):
 
     @api_view(['POST'])
     def loginSocio(request):
         idIntroducido = request.data.get('idUser')
-        if(User.objects.filter(pk= idIntroducido).count() == 1):
+        if(User.objects.filter(pk= idIntroducido, is_staff=False).count() == 1):
             return Response({"success": "User login successful" })
         else:
-            return Response({"error": "No user found" })
+            return Response({"error": "No user found or user is staff" })
+
+    def get(self, request, pk):
+        if(pk == 0):
+            #usuario = User.objects.get(is_staff=False) <- NO FUNCIONA
+            usuario = User.objects.all()
+            serializer = SocioSerializer(usuario, many=True)
+        else:
+            usuario = User.objects.get(pk = pk, is_staff=False)
+            serializer = SocioSerializer(usuario, many=False)
+
+        return Response({"User": serializer.data})
+    
+    def post(self, request):
+        usuario = request.data.get('user')
+        # Create an user from the above data
+        serializer = SocioSerializer(data=usuario)
+        if serializer.is_valid(raise_exception=True):
+            user_saved = serializer.save()
+        return Response({"success": "User '{}' created successfully".format(user_saved.username), "id" : user_saved.pk})
+    
+    def put(self, request, pk):
+        saved_user = get_object_or_404(User.objects.all(), pk=pk, is_staff=False)
+        data = request.data.get('user')
+        serializer = SocioSerializer(instance=saved_user, data=data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            user_saved = serializer.save()
+        return Response({"success": "User '{}' updated successfully".format(user_saved.username), "id" : user_saved.pk})
+
+    def delete(self, request, pk):
+        # Get object with this pk
+        user = get_object_or_404(User.objects.all(), pk=pk, is_staff=False)
+        user.delete()
+        return Response({"message": "User with id `{}` has been deleted.".format(pk)},status=204)
+
+
+class FacilitadorView(APIView):
 
     @api_view(['POST'])
     def loginFacilitador(request):
@@ -189,39 +225,44 @@ class UserView(APIView):
             if(possibleUser.get().is_staff and possibleUser.get().check_password(passwordIntroducido)):
                 return Response({"success": "User login successful" })
         
-        return Response({"error": "No user found" })
+        return Response({"error": "No user found or user is not staff" })
 
     def get(self, request, pk):
         if(pk == 0):
             usuario = User.objects.all()
-            serializer = UserSerializer(usuario, many=True)
+            serializer = FacilitadorSerializer(usuario, many=True)
         else:
             usuario = User.objects.get(pk = pk)
-            serializer = UserSerializer(usuario, many=False)
+            serializer = FacilitadorSerializer(usuario, many=False)
 
         return Response({"User": serializer.data})
     
     def post(self, request):
         usuario = request.data.get('user')
         # Create an user from the above data
-        serializer = UserSerializer(data=usuario)
+        serializer = FacilitadorSerializer(data=usuario)
         if serializer.is_valid(raise_exception=True):
             user_saved = serializer.save()
-        return Response({"success": "User '{}' created successfully".format(user_saved.username)})
+            # PROBLEMA: La contraseña no se cifra (se intenta guardar como se pase) y por tanto no se guarda en la base de datos.
+            # Esto no hace nada
+            # user_saved.is_staff = True
+            # user_saved.set_password(usuario.get("password"))
+        return Response({"success": "User '{}' created successfully".format(user_saved.username), "id" : user_saved.pk})
     
     def put(self, request, pk):
-        saved_user = get_object_or_404(User.objects.all(), pk=pk)
+        saved_user = get_object_or_404(User.objects.all(), pk=pk, is_staff=True)
         data = request.data.get('user')
-        serializer = UserSerializer(instance=saved_user, data=data, partial=True)
+        serializer = FacilitadorSerializer(instance=saved_user, data=data, partial=True)
         if serializer.is_valid(raise_exception=True):
             user_saved = serializer.save()
-        return Response({"success": "User '{}' updated successfully".format(user_saved.username)})
+        return Response({"success": "User '{}' updated successfully".format(user_saved.username), "id" : user_saved.pk})
 
     def delete(self, request, pk):
         # Get object with this pk
-        user = get_object_or_404(User.objects.all(), pk=pk)
+        user = get_object_or_404(User.objects.all(), pk=pk, is_staff=True)
         user.delete()
         return Response({"message": "User with id `{}` has been deleted.".format(pk)},status=204)
+
 
 
 class ActividadUsuarioView(APIView):

@@ -24,8 +24,8 @@ from .views import *
 
 
 #### Cosas del rest framework ###
-router = routers.DefaultRouter()
-router.register(r'getAllUsers', views.UserViewSet)
+# router = routers.DefaultRouter()
+# router.register(r'getAllUsers', views.UserViewSet)
 #router.register(r'hello', views.hello_world)
 
 urlpatterns = [
@@ -41,12 +41,17 @@ urlpatterns = [
     re_path(r'^eliminarActividad/(?P<id>[0-9]+)$', views.eliminarActividad, name='eliminarActividad'),
     re_path(r'^verActividad/(?P<id>[0-9]+)$', views.verActividad, name='verActividad'),
     re_path(r'^verActividadesUsuario/(?P<id>[0-9]+)$', views.verActividadesUsuario, name='verActividadesUsuario'),
-    path('', include(router.urls)),
+    # path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    
     path('actividad/<int:pk>', ActividadView.as_view()),
     path('actividad/<int:pkUsuario>/<int:pkActividad>', ActividadUsuarioView.as_view()),
-    path('usuario/<int:pk>', UserView.as_view()),
-    path('usuario/', UserView.as_view()),
-    path('loginSocio/', UserView.loginSocio),
-    path('loginFacilitador/', UserView.loginFacilitador),
+    
+    path('socio/<int:pk>', SocioView.as_view()),
+    path('crearSocio/', SocioView.as_view()),
+    path('loginSocio/', SocioView.loginSocio),
+
+    path('facilitador/<int:pk>', FacilitadorView.as_view()),
+    path('crearFacilitador/', FacilitadorView.as_view()),
+    path('loginFacilitador/', FacilitadorView.loginFacilitador),
 ]
