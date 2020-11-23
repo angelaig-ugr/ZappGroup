@@ -8,7 +8,7 @@ from app.forms import *
 #imports de serialziers
 from .serializers import *
 from rest_framework import viewsets, permissions
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from .models import User
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -171,9 +171,25 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class UserView(APIView):
 
-    @api_view(['GET'])
-    def login(request):
-        return Response({"Holis": "Heyyyyyyy"})
+    @api_view(['POST'])
+    def loginSocio(request):
+        idIntroducido = request.data.get('idUser')
+        if(User.objects.filter(pk= idIntroducido).count() == 1):
+            return Response({"success": "User login successful" })
+        else:
+            return Response({"error": "No user found" })
+
+    @api_view(['POST'])
+    def loginFacilitador(request):
+        usernameIntroducido = request.data.get('username')
+        passwordIntroducido = request.data.get('password')
+
+        possibleUser = User.objects.filter(username= usernameIntroducido) 
+        if(possibleUser.count() == 1):
+            if(possibleUser.get().is_staff and possibleUser.get().check_password(passwordIntroducido)):
+                return Response({"success": "User login successful" })
+        
+        return Response({"error": "No user found" })
 
     def get(self, request, pk):
         if(pk == 0):
@@ -187,8 +203,7 @@ class UserView(APIView):
     
     def post(self, request):
         usuario = request.data.get('user')
-
-        # Create an article from the above data
+        # Create an user from the above data
         serializer = UserSerializer(data=usuario)
         if serializer.is_valid(raise_exception=True):
             user_saved = serializer.save()
@@ -209,17 +224,19 @@ class UserView(APIView):
         return Response({"message": "User with id `{}` has been deleted.".format(pk)},status=204)
 
 
-class ActividadView(APIView):
+class ActividadUsuarioView(APIView):
     
-    # Aqui lo suyo es que si pk es algún valor especial devolvamos todas las tareas
-    def get(self, request, pk):
-        if(pk == "all"):
-            actividades = Actividad.objects.all()
+    # Devolver actividad de un usuario
+    def get(self, request, pkUsuario, pkActividad):
+        if(pkActividad == 0):
+            actividades = Actividad.objects.get(idUsuario=pkUsuario)
+        else:
+            actividades = Actividad.objects.get(idUsuario= pkUsuario, pk= pkActividad)
         # the many param informs the serializer that it will be serializing more than a single article.
         serializer = ActividadSerializer(actividades, many=True)
-        return Response({"pruebaconPK": serializer.data})
+        return Response({"Actividades": serializer.data})
 
-class ActividadUsuarioView(APIView):
+class ActividadView(APIView):
 
     def get(self, request, pk):
         if(pk == 0):
@@ -228,12 +245,10 @@ class ActividadUsuarioView(APIView):
         else:
             actividades = Actividad.objects.get(pk= pk)
             serializer = ActividadSerializer(actividades, many=True)
-
         return Response({"Actividad": serializer.data})
 
     def post(self, request):
         actividad = request.data.get('actividad')
-
         # Create an article from the above data
         serializer = ActividadSerializer(data=actividad)
         if serializer.is_valid(raise_exception=True):
