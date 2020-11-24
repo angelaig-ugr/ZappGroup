@@ -35,7 +35,7 @@ class SocioSerializer(serializers.HyperlinkedModelSerializer):
             return user
 
 
-class ActividadSerializer(serializers.HyperlinkedModelSerializer):
+class ActividadSerializer(serializers.HyperlinkedModelSerializer):    
     class Meta:
         model = Actividad
         fields = ['idUsuario', 'idProfesional']

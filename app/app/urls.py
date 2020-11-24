@@ -24,9 +24,9 @@ from .views import *
 
 
 #### Cosas del rest framework ###
-# router = routers.DefaultRouter()
-# router.register(r'getAllUsers', views.UserViewSet)
-#router.register(r'hello', views.hello_world)
+router = routers.DefaultRouter()
+#router.register(r'getAllUsers', views.UserViewSet)
+# router.register(r'hello', views.hello_world)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
