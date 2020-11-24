@@ -42,10 +42,10 @@ class ActividadSerializer(serializers.HyperlinkedModelSerializer):
 
         def create(self, validated_data):
             return Actividad.objects.create(**validated_data)
-        
+
         def update(self, activity, validated_data):
             activity.idUsuario = validated_data.get('idUsuario', activity.idUsuario)
-            activity.email = validated_data.get('email', activity.idProfesional)
+            activity.idProfesional = validated_data.get('idProfesional', activity.idProfesional)
 
             activity.save()
             return activity

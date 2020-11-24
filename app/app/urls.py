@@ -43,10 +43,11 @@ urlpatterns = [
     re_path(r'^verActividadesUsuario/(?P<id>[0-9]+)$', views.verActividadesUsuario, name='verActividadesUsuario'),
     # path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    
-    path('actividad/<int:pk>', ActividadView.as_view()),
+
+    path('actividad/<int:pk>', ActividadView.as_view()), #coger datos actividad
+    path('crearActividad/', ActividadView.as_view()), #crear act, con json
     path('actividad/<int:pkUsuario>/<int:pkActividad>', ActividadUsuarioView.as_view()),
-    
+
     path('socio/<int:pk>', SocioView.as_view()),
     path('crearSocio/', SocioView.as_view()),
     path('loginSocio/', SocioView.loginSocio),
