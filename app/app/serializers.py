@@ -35,17 +35,17 @@ class SocioSerializer(serializers.HyperlinkedModelSerializer):
             return user
 
 
-class ActividadSerializer(serializers.HyperlinkedModelSerializer):    
+class ActividadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actividad
-        fields = ['idUsuario', 'idProfesional']
+        fields = ['idUsuario', 'idProfesional', 'categoria']
 
-        def create(self, validated_data):
-            return Actividad.objects.create(**validated_data)
-
-        def update(self, activity, validated_data):
-            activity.idUsuario = validated_data.get('idUsuario', activity.idUsuario)
-            activity.idProfesional = validated_data.get('idProfesional', activity.idProfesional)
-
-            activity.save()
-            return activity
+        # def create(self, validated_data):
+        #     return Actividad.objects.create(**validated_data)
+        #
+        # def update(self, activity, validated_data):
+        #     activity.idUsuario = validated_data.get('idUsuario', activity.idUsuario)
+        #     activity.idProfesional = validated_data.get('idProfesional', activity.idProfesional)
+        #
+        #     activity.save()
+        #     return activity
