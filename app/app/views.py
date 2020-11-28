@@ -246,10 +246,6 @@ class FacilitadorView(APIView):
             user_saved.set_password(usuario.get("password"))
             user_saved.is_staff = True
             user_saved.save()
-            # PROBLEMA: La contraseña no se cifra (se intenta guardar como se pase) y por tanto no se guarda en la base de datos.
-            # Esto no hace nada
-            # user_saved.is_staff = True
-            # user_saved.set_password(usuario.get("password"))
 
         return Response({"success": "User '{}' created successfully".format(user_saved.username), "id" : user_saved.pk})
     
@@ -289,7 +285,7 @@ class ActividadView(APIView):
             serializer = ActividadSerializer(actividades, many=True)
         else:
             actividades = Actividad.objects.get(pk= pk)
-            serializer = ActividadSerializer(actividades, many=True)
+            serializer = ActividadSerializer(actividades, many=False)
         return Response({"Actividad": serializer.data})
 
     def post(self, request):
@@ -298,7 +294,7 @@ class ActividadView(APIView):
         serializer = ActividadSerializer(data=actividad)
         if serializer.is_valid(raise_exception=True):
             actividad_saved = serializer.save()
-        return Response({"success": "Actividad with id '{}' created successfully".format(actividad_saved.pk)})
+        return Response({"success": "Actividad with id '{}' created successfully".format(actividad_saved.pk), "id" : actividad_saved.pk})
     
     def put(self, request, pk):
         saved_actividad = get_object_or_404(Actividad.objects.all(), pk=pk)
@@ -306,7 +302,7 @@ class ActividadView(APIView):
         serializer = ActividadSerializer(instance=saved_actividad, data=data, partial=True)
         if serializer.is_valid(raise_exception=True):
             actividad_saved = serializer.save()
-        return Response({"success": "Actividad with id'{}' updated successfully".format(pk)})
+        return Response({"success": "Actividad with id'{}' updated successfully".format(pk), "id" : actividad_saved.pk})
 
     def delete(self, request, pk):
         # Get object with this pk
