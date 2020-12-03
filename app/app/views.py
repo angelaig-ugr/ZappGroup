@@ -9,7 +9,8 @@ from app.forms import *
 from .serializers import *
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import api_view, permission_classes
-from .models import User
+from .models import User, Actividad
+from app.models.actividades import Adjuntado
 from rest_framework.views import APIView
 from rest_framework.response import Response
 ########
@@ -266,7 +267,6 @@ class FacilitadorView(APIView):
 
 
 class ActividadUsuarioView(APIView):
-    
     # Devolver actividad de un usuario
     def get(self, request, pkUsuario, pkActividad):
         if(pkActividad == 0):
@@ -276,6 +276,7 @@ class ActividadUsuarioView(APIView):
         # the many param informs the serializer that it will be serializing more than a single article.
         serializer = ActividadSerializer(actividades, many=True)
         return Response({"Actividades": serializer.data})
+
 
 class ActividadView(APIView):
 
@@ -310,3 +311,24 @@ class ActividadView(APIView):
         actividad.delete()
         return Response({"message": "Actividad with id `{}` has been deleted.".format(pk)},status=204)
     
+class AdjuntadoView(APIView):
+    def get(self, request, pk):
+        
+        adjuntados = Adjuntado.objects.filter(idActividad=pk).order_by('fechaCreacion')
+        serializer = AdjuntadoSerializer(adjuntados, many=True)
+        
+        return Response({"Adjuntado": serializer.data})
+
+    def post(self, request):
+        adjuntado = request.data.get('adjuntado')
+        # Create an article from the above data
+        serializer = AdjuntadoSerializer(data=adjuntado)
+        if serializer.is_valid(raise_exception=True):
+            adjuntado_saved = serializer.save()
+        return Response({"success": "Adjuntado with id '{}' created successfully".format(adjuntado_saved.pk), "id" : adjuntado_saved.pk})
+
+    def delete(self, request, pk):
+        # Get object with this pk
+        adjuntado = get_object_or_404(Adjuntado.objects.all(), pk=pk)
+        adjuntado.delete()
+        return Response({"message": "Adjuntado with id `{}` has been deleted.".format(pk)},status=204)

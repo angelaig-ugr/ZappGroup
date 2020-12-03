@@ -48,6 +48,9 @@ urlpatterns = [
     path('crearActividad/', ActividadView.as_view()), #crear act, con json
     path('actividad/<int:pkUsuario>/<int:pkActividad>', ActividadUsuarioView.as_view()),
 
+    path('actividad/adjuntar/', AdjuntadoView.as_view()),
+    path('actividad/adjuntar/<int:pk>', AdjuntadoView.as_view()),
+
     path('socio/<int:pk>', SocioView.as_view()),
     path('crearSocio/', SocioView.as_view()),
     path('loginSocio/', SocioView.loginSocio),
