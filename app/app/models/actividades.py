@@ -45,4 +45,4 @@ class Adjuntado(models.Model):
 	pdf = models.FileField(upload_to=None, max_length=100, blank=True)
 	comentario = models.CharField(max_length=5000, blank=True)
 	video = models.URLField(blank=True)
-	# imagen = models.ImageField(upload_to=None, height_field=None, width_field=None, max_length=100)
+	imagen = models.ImageField(height_field=None, width_field=None, max_length=100)

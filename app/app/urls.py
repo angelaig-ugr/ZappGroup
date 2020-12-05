@@ -21,7 +21,8 @@ from . import views
 from rest_framework import routers
 
 from .views import *
-
+from django.conf import settings
+from django.conf.urls.static import static
 
 #### Cosas del rest framework ###
 router = routers.DefaultRouter()
@@ -58,4 +59,6 @@ urlpatterns = [
     path('facilitador/<int:pk>', FacilitadorView.as_view()),
     path('crearFacilitador/', FacilitadorView.as_view()),
     path('loginFacilitador/', FacilitadorView.loginFacilitador),
-]
+
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
