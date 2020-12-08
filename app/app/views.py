@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.http import HttpResponseRedirect
 import datetime
 
@@ -182,11 +182,10 @@ class SocioView(APIView):
 
     def get(self, request, pk):
         if(pk == 0):
-            #usuario = User.objects.get(is_staff=False) <- NO FUNCIONA
-            usuario = User.objects.all()
+            usuario = get_list_or_404(User.objects.all(), is_staff=False)
             serializer = SocioSerializer(usuario, many=True)
         else:
-            usuario = User.objects.get(pk = pk, is_staff=False)
+            usuario = get_object_or_404(User.objects.all(), pk=pk, is_staff=False)
             serializer = SocioSerializer(usuario, many=False)
 
         return Response({"User": serializer.data})
@@ -213,7 +212,6 @@ class SocioView(APIView):
         user.delete()
         return Response({"message": "User with id `{}` has been deleted.".format(pk)},status=204)
 
-
 class FacilitadorView(APIView):
 
     @api_view(['POST'])
@@ -230,11 +228,18 @@ class FacilitadorView(APIView):
 
     def get(self, request, pk):
         if(pk == 0):
-            usuario = User.objects.all()
+            usuario = get_list_or_404(User.objects.all(), is_staff=True)
             serializer = FacilitadorSerializer(usuario, many=True)
         else:
-            usuario = User.objects.get(pk = pk)
+            usuario = get_object_or_404(User.objects.all(), pk=pk, is_staff=True)
             serializer = FacilitadorSerializer(usuario, many=False)
+
+        return Response({"User": serializer.data})
+
+    @api_view(['GET'])
+    def allUsers(request):
+        usuario = User.objects.all()
+        serializer = FacilitadorSerializer(usuario, many=True)
 
         return Response({"User": serializer.data})
     
@@ -264,19 +269,35 @@ class FacilitadorView(APIView):
         user.delete()
         return Response({"message": "User with id `{}` has been deleted.".format(pk)},status=204)
 
-
-
 class ActividadUsuarioView(APIView):
     # Devolver actividad de un usuario
     def get(self, request, pkUsuario, pkActividad):
         if(pkActividad == 0):
-            actividades = Actividad.objects.get(idUsuario=pkUsuario)
+            actividades = get_list_or_404(Actividad.objects.all(), idUsuario= pkUsuario)
+            serializer = ActividadSerializer(actividades, many=True)
         else:
-            actividades = Actividad.objects.get(idUsuario= pkUsuario, pk= pkActividad)
-        # the many param informs the serializer that it will be serializing more than a single article.
-        serializer = ActividadSerializer(actividades, many=True)
+            actividades = get_object_or_404(Actividad.objects.all(), idUsuario= pkUsuario, pk= pkActividad)
+            serializer = ActividadSerializer(actividades, many=False)
+
         return Response({"Actividades": serializer.data})
 
+    @api_view(['GET'])
+    def actividadesNoEntregadas(request, pkUsuario):
+        actividades = get_list_or_404(Actividad.objects.all(), idUsuario= pkUsuario, estado=Actividad.NO_ENTREGADO)
+        serializer = ActividadSerializer(actividades, many=True)
+        return Response({"Actividades": serializer.data})
+    
+    @api_view(['GET'])
+    def actividadesEntregadas(request, pkUsuario):
+        actividades = get_list_or_404(Actividad.objects.all(), idUsuario= pkUsuario, estado=Actividad.ENTREGADO)
+        serializer = ActividadSerializer(actividades, many=True)
+        return Response({"Actividades": serializer.data})
+    
+    @api_view(['GET'])
+    def actividadesRevisadas(request, pkUsuario):
+        actividades = get_list_or_404(Actividad.objects.all(), idUsuario= pkUsuario, estado=Actividad.REVISADO)
+        serializer = ActividadSerializer(actividades, many=True)
+        return Response({"Actividades": serializer.data})
 
 class ActividadView(APIView):
 
@@ -285,8 +306,9 @@ class ActividadView(APIView):
             actividades = Actividad.objects.all()
             serializer = ActividadSerializer(actividades, many=True)
         else:
-            actividades = Actividad.objects.get(pk= pk)
+            actividades = get_object_or_404(Actividad.objects.all(), pk= pk)
             serializer = ActividadSerializer(actividades, many=False)
+
         return Response({"Actividad": serializer.data})
 
     def post(self, request):
@@ -313,8 +335,7 @@ class ActividadView(APIView):
     
 class AdjuntadoView(APIView):
     def get(self, request, pk):
-        
-        adjuntados = Adjuntado.objects.filter(idActividad=pk).order_by('fechaCreacion')
+        adjuntados = get_list_or_404(Adjuntado.objects.all().order_by('fechaCreacion'), idActividad=pk)
         serializer = AdjuntadoSerializer(adjuntados, many=True)
         
         return Response({"Adjuntado": serializer.data})

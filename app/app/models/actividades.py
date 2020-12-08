@@ -13,16 +13,18 @@ class Categoria(models.Model):
 class Actividad(models.Model):
 	idUsuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="socio")
 	idProfesional = models.ForeignKey(User, on_delete=models.CASCADE, related_name="voluntario")
-
 	categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE,default=None)
 	descripcion = models.CharField(max_length=5000, blank=True)
-	video = models.URLField(blank=True)
 
+	
+	# Esto lo dejamos pero en verdad tiene uso 0, es más porque no estorba que por otra cosa
+	video = models.URLField(blank=True)
 	# Hace falta Pillow según el compilador
 	# imagen = models.ImageField(upload_to=None, height_field=None, width_field=None, max_length=100)
-
 	pdf = models.FileField(upload_to=None, max_length=100, blank=True)
 	comentario = models.CharField(max_length=5000, blank=True)
+	
+	
 	fechaEntrega = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, default=None)
 	fechaCreacion = models.DateField(auto_now=False, auto_now_add=True)
 
@@ -45,4 +47,4 @@ class Adjuntado(models.Model):
 	pdf = models.FileField(upload_to=None, max_length=100, blank=True)
 	comentario = models.CharField(max_length=5000, blank=True)
 	video = models.URLField(blank=True)
-	imagen = models.ImageField(height_field=None, width_field=None, max_length=100)
+	imagen = models.ImageField(height_field=None, width_field=None, max_length=100, blank=True)

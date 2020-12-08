@@ -48,6 +48,9 @@ urlpatterns = [
     path('actividad/<int:pk>', ActividadView.as_view()), #coger datos actividad
     path('crearActividad/', ActividadView.as_view()), #crear act, con json
     path('actividad/<int:pkUsuario>/<int:pkActividad>', ActividadUsuarioView.as_view()),
+    path('actividad/entregadas/<int:pkUsuario>', ActividadUsuarioView.actividadesEntregadas),
+    path('actividad/noentregadas/<int:pkUsuario>', ActividadUsuarioView.actividadesNoEntregadas),
+    path('actividad/revisadas/<int:pkUsuario>', ActividadUsuarioView.actividadesRevisadas),
 
     path('actividad/adjuntar/', AdjuntadoView.as_view()),
     path('actividad/adjuntar/<int:pk>', AdjuntadoView.as_view()),
@@ -55,6 +58,8 @@ urlpatterns = [
     path('socio/<int:pk>', SocioView.as_view()),
     path('crearSocio/', SocioView.as_view()),
     path('loginSocio/', SocioView.loginSocio),
+
+    path('allUsers/', FacilitadorView.allUsers),
 
     path('facilitador/<int:pk>', FacilitadorView.as_view()),
     path('crearFacilitador/', FacilitadorView.as_view()),
