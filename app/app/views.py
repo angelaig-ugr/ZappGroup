@@ -279,25 +279,25 @@ class ActividadUsuarioView(APIView):
             actividades = get_object_or_404(Actividad.objects.all(), idUsuario= pkUsuario, pk= pkActividad)
             serializer = ActividadSerializer(actividades, many=False)
 
-        return Response({"Actividades": serializer.data})
+        return Response({"Actividad": serializer.data})
 
     @api_view(['GET'])
     def actividadesNoEntregadas(request, pkUsuario):
         actividades = get_list_or_404(Actividad.objects.all(), idUsuario= pkUsuario, estado=Actividad.NO_ENTREGADO)
         serializer = ActividadSerializer(actividades, many=True)
-        return Response({"Actividades": serializer.data})
+        return Response({"Actividad": serializer.data})
     
     @api_view(['GET'])
     def actividadesEntregadas(request, pkUsuario):
         actividades = get_list_or_404(Actividad.objects.all(), idUsuario= pkUsuario, estado=Actividad.ENTREGADO)
         serializer = ActividadSerializer(actividades, many=True)
-        return Response({"Actividades": serializer.data})
+        return Response({"Actividad": serializer.data})
     
     @api_view(['GET'])
     def actividadesRevisadas(request, pkUsuario):
         actividades = get_list_or_404(Actividad.objects.all(), idUsuario= pkUsuario, estado=Actividad.REVISADO)
         serializer = ActividadSerializer(actividades, many=True)
-        return Response({"Actividades": serializer.data})
+        return Response({"Actividad": serializer.data})
 
 class ActividadView(APIView):
 

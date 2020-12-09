@@ -39,7 +39,7 @@ class SocioSerializer(serializers.HyperlinkedModelSerializer):
 class ActividadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actividad
-        fields = ['idUsuario', 'idProfesional', 'categoria']
+        fields = ['idUsuario', 'idProfesional', 'categoria', 'nombre', 'descripcion']
 
         # def create(self, validated_data):
         #     return Actividad.objects.create(**validated_data)

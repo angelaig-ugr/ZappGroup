@@ -14,6 +14,8 @@ class Actividad(models.Model):
 	idUsuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="socio")
 	idProfesional = models.ForeignKey(User, on_delete=models.CASCADE, related_name="voluntario")
 	categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE,default=None)
+	
+	nombre = models.CharField(max_length=5000, default="Actividad")
 	descripcion = models.CharField(max_length=5000, blank=True)
 
 	
