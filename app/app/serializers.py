@@ -5,7 +5,7 @@ from rest_framework import serializers
 class FacilitadorSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'password', 'email', 'fechaNacimiento']
+        fields = ['id','username', 'password', 'email', 'fechaNacimiento']
 
         def create(self, validated_data):
             return User.objects.create(**validated_data)
@@ -22,7 +22,7 @@ class FacilitadorSerializer(serializers.HyperlinkedModelSerializer):
 class SocioSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'email', 'fechaNacimiento']
+        fields = ['id', 'username', 'email', 'fechaNacimiento']
 
         def create(self, validated_data):
             return User.objects.create(**validated_data)
@@ -39,7 +39,7 @@ class SocioSerializer(serializers.HyperlinkedModelSerializer):
 class ActividadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actividad
-        fields = ['idUsuario', 'idProfesional', 'categoria', 'nombre', 'descripcion']
+        fields = ['id', 'idUsuario', 'idProfesional', 'categoria', 'nombre', 'descripcion']
 
         # def create(self, validated_data):
         #     return Actividad.objects.create(**validated_data)
