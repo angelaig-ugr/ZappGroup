@@ -7,8 +7,9 @@ from app.forms import *
 
 #imports de serialziers
 from .serializers import *
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.parsers import FileUploadParser, MultiPartParser, FormParser
 from .models import User, Actividad
 from app.models.actividades import Adjuntado
 from rest_framework.views import APIView
@@ -332,7 +333,7 @@ class ActividadView(APIView):
         actividad = get_object_or_404(Actividad.objects.all(), pk=pk)
         actividad.delete()
         return Response({"message": "Actividad with id `{}` has been deleted.".format(pk)},status=204)
-    
+
 class AdjuntadoView(APIView):
     def get(self, request, pk):
         adjuntados = get_list_or_404(Adjuntado.objects.all().order_by('fechaCreacion'), idActividad=pk)
@@ -340,16 +341,28 @@ class AdjuntadoView(APIView):
         
         return Response({"Adjuntado": serializer.data})
 
-    def post(self, request):
-        adjuntado = request.data.get('adjuntado')
-        # Create an article from the above data
-        serializer = AdjuntadoSerializer(data=adjuntado)
-        if serializer.is_valid(raise_exception=True):
-            adjuntado_saved = serializer.save()
-        return Response({"success": "Adjuntado with id '{}' created successfully".format(adjuntado_saved.pk), "id" : adjuntado_saved.pk})
-
+    # def post(self, request):
+    #     adjuntado = request.data.get('adjuntado')
+    #     # Create an article from the above data
+    #     serializer = AdjuntadoSerializer(data=adjuntado)
+    #     if serializer.is_valid(raise_exception=True):
+    #         adjuntado_saved = serializer.save()
+    #     return Response({"success": "Adjuntado with id '{}' created successfully".format(adjuntado_saved.pk), "id" : adjuntado_saved.pk})
+    
     def delete(self, request, pk):
         # Get object with this pk
         adjuntado = get_object_or_404(Adjuntado.objects.all(), pk=pk)
         adjuntado.delete()
         return Response({"message": "Adjuntado with id `{}` has been deleted.".format(pk)},status=204)
+
+# Esto es lo de adjuntar (va aparte por lo de las parser_classes que no sé si joderá a otros métodos o no)
+class FileUploadView(APIView):
+    parser_classes = (FormParser, MultiPartParser)
+
+    def put(self, request):
+        adjuntado = AdjuntadoSerializer(data=request.data)
+        if adjuntado.is_valid():
+            adjuntado.save()
+            return Response(adjuntado.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(adjuntado.errors, status=status.HTTP_400_BAD_REQUEST)

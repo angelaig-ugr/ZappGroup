@@ -60,6 +60,7 @@ urlpatterns = [
     path('loginSocio/', SocioView.loginSocio),
 
     path('allUsers/', FacilitadorView.allUsers),
+    path('subir/', FileUploadView.as_view()),
 
     path('facilitador/<int:pk>', FacilitadorView.as_view()),
     path('crearFacilitador/', FacilitadorView.as_view()),

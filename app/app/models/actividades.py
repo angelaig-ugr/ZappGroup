@@ -43,10 +43,13 @@ class Actividad(models.Model):
 	estado = models.CharField(choices=OPCIONES, max_length=200, default=NO_ENTREGADO)
 
 class Adjuntado(models.Model):
-	idActividad = models.ForeignKey(Actividad, on_delete=models.CASCADE, related_name="idActividad")
 	fechaCreacion = models.DateField(auto_now=False, auto_now_add=True)
+
+	idActividad = models.ForeignKey(Actividad, on_delete=models.CASCADE, related_name="idActividad")	
 	is_staff = models.BooleanField(blank=False)
-	pdf = models.FileField(upload_to=None, max_length=100, blank=True)
+	
+	pdf = models.FileField(max_length=100, blank=True, null=True)
 	comentario = models.CharField(max_length=5000, blank=True)
 	video = models.URLField(blank=True)
-	imagen = models.ImageField(height_field=None, width_field=None, max_length=100, blank=True)
+	imagen = models.ImageField(height_field=None, width_field=None, max_length=100, blank=True, null=True)
+	audio = models.FileField(max_length=100, blank=True, null=True)

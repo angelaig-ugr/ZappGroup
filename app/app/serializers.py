@@ -54,4 +54,4 @@ class ActividadSerializer(serializers.ModelSerializer):
 class AdjuntadoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Adjuntado
-        fields = ['idActividad', 'is_staff', 'pdf', 'comentario', 'video']
+        fields = ['id', 'idActividad', 'is_staff', 'pdf', 'comentario', 'video', 'imagen', 'audio']
