@@ -52,7 +52,7 @@ urlpatterns = [
     path('actividad/noentregadas/<int:pkUsuario>', ActividadUsuarioView.actividadesNoEntregadas),
     path('actividad/revisadas/<int:pkUsuario>', ActividadUsuarioView.actividadesRevisadas),
     path('actividad/norevisadas/<int:pkProfesional>', ActividadUsuarioView.actividadesNoRevisadas),
-    #path('actividad/<int:pk>/<string:estado>', ActividadView.cambiarEstado),
+    re_path(r'^actividad/<int:pk>/(?P<estado>[A-Z])$', ActividadView.cambiarEstado),
 
     path('actividad/adjuntar/', AdjuntadoView.as_view()),
     path('actividad/adjuntar/<int:pk>', AdjuntadoView.as_view()),
