@@ -300,6 +300,13 @@ class ActividadUsuarioView(APIView):
         serializer = ActividadSerializer(actividades, many=True)
         return Response({"Actividad": serializer.data})
 
+    @api_view(['GET'])
+    def actividadesNoRevisadas(request, pkProfesional):
+        actividades = get_list_or_404(Actividad.objects.all(), idProfesional= pkProfesional, estado=Actividad.NO_ENTREGADO)
+        serializer = ActividadSerializer(actividades, many=True)
+        return Response({"Actividad": serializer.data})
+
+
 class ActividadView(APIView):
 
     def get(self, request, pk):
@@ -334,12 +341,22 @@ class ActividadView(APIView):
         actividad.delete()
         return Response({"message": "Actividad with id `{}` has been deleted.".format(pk)},status=204)
 
+    @api_view(['PUT'])
+    def cambiarEstado(request,pk,estado):
+        actividad = get_object_or_404(Actividad.objects.all(), pk=pk)
+        actividad.categoria=estado
+        actividad.save()
+        return Response({"success": "Actividad with id'{}' updated successfully".format(pk), "id" : actividad.pk})
+        
+
+
 class AdjuntadoView(APIView):
     def get(self, request, pk):
         adjuntados = get_list_or_404(Adjuntado.objects.all().order_by('fechaCreacion'), idActividad=pk)
         serializer = AdjuntadoSerializer(adjuntados, many=True)
-        
-        return Response({"Adjuntado": serializer.data})
+        if serializer.is_valid(raise_exception=True):
+            actividad_saved = serializer.save()
+        return Response({"success": "Actividad with id'{}' updated successfully".format(pk), "id" : actividad_saved.pk})
 
     # def post(self, request):
     #     adjuntado = request.data.get('adjuntado')
