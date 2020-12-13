@@ -18,12 +18,10 @@ class Actividad(models.Model):
 	nombre = models.CharField(max_length=5000, default="Actividad")
 	descripcion = models.CharField(max_length=5000, blank=True)
 
-	
-	# Esto lo dejamos pero en verdad tiene uso 0, es más porque no estorba que por otra cosa
 	video = models.URLField(blank=True)
 	# Hace falta Pillow según el compilador
-	# imagen = models.ImageField(upload_to=None, height_field=None, width_field=None, max_length=100)
-	pdf = models.FileField(upload_to=None, max_length=100, blank=True)
+	imagen = models.ImageField(height_field=None, width_field=None, max_length=100, blank=True, null=True)
+	pdf = models.FileField(max_length=100, blank=True, null=True)
 	comentario = models.CharField(max_length=5000, blank=True)
 	
 	

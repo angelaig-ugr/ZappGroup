@@ -302,7 +302,7 @@ class ActividadUsuarioView(APIView):
 
     @api_view(['GET'])
     def actividadesNoRevisadas(request, pkProfesional):
-        actividades = get_list_or_404(Actividad.objects.all(), idProfesional= pkProfesional, estado=Actividad.NO_ENTREGADO)
+        actividades = get_list_or_404(Actividad.objects.all(), idProfesional= pkProfesional, estado=Actividad.ENTREGADO)
         serializer = ActividadSerializer(actividades, many=True)
         return Response({"Actividad": serializer.data})
 
@@ -344,7 +344,9 @@ class ActividadView(APIView):
     @api_view(['PUT'])
     def cambiarEstado(request,pk,estado):
         actividad = get_object_or_404(Actividad.objects.all(), pk=pk)
-        actividad.categoria=estado
+        if(estado == 0): actividad.estado=Actividad.ENTREGADO
+        elif(estado == 1): actividad.estado=Actividad.NO_ENTREGADO
+        elif(estado == 2): actividad.estado=Actividad.REVISADO
         actividad.save()
         return Response({"success": "Actividad with id'{}' updated successfully".format(pk), "id" : actividad.pk})
         
@@ -383,3 +385,15 @@ class FileUploadView(APIView):
             return Response(adjuntado.data, status=status.HTTP_201_CREATED)
         else:
             return Response(adjuntado.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# Esto es lo de adjuntar (va aparte por lo de las parser_classes que no sé si joderá a otros métodos o no)
+class CrearActividadView(APIView):
+    parser_classes = (FormParser, MultiPartParser)
+
+    def put(self, request):
+        actividad = ActividadSerializer(data=request.data)
+        if actividad.is_valid():
+            actividad.save()
+            return Response(actividad.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(actividad.errors, status=status.HTTP_400_BAD_REQUEST)
