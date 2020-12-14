@@ -1,5 +1,6 @@
 from .models import *
 from app.models.actividades import Adjuntado
+from app.models.gestionUsuario import *
 from rest_framework import serializers
 
 class FacilitadorSerializer(serializers.HyperlinkedModelSerializer):
@@ -55,3 +56,8 @@ class AdjuntadoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Adjuntado
         fields = ['id', 'idActividad', 'is_staff', 'pdf', 'comentario', 'video', 'imagen', 'audio']
+
+class GrupoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Grupo
+        fields = ['id', 'nombre', 'idUsuario']

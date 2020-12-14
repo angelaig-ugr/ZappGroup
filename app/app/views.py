@@ -14,6 +14,7 @@ from .models import User, Actividad
 from app.models.actividades import Adjuntado
 from rest_framework.views import APIView
 from rest_framework.response import Response
+
 ########
 
 
@@ -171,6 +172,53 @@ def logout(request):
 #     serializer_class = UserSerializer
 #     permission_classes = [permissions.IsAuthenticated]
 
+class GrupoView(APIView):
+    def get(self, request):
+        #grupos = get_list_or_404(Grupo.objects.all()).
+        #serializer = GrupoSerializer(grupos, many=True)
+        q = Grupo.objects.values('nombre').distinct()
+        nombres = []
+        for elem in q:
+            nombres.append(elem["nombre"])
+
+        return Response({"grupos": nombres})
+        #return Response({"grupos": serializer.data})
+
+    @api_view(['GET'])
+    def getGrupo(request, nombre):
+         usuarios = get_list_or_404(Grupo.objects.all(), nombre=nombre)
+         serializer = GrupoSerializer(usuarios, many=True)
+
+         data = []
+         for usuario in usuarios:
+             data.append(usuario.idUsuario.id)
+
+         return Response({"nombre": nombre, "usuarios": data})
+
+    def post(self, request):
+        # Create an user from the above data
+        serializer = GrupoSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            grupo_saved = serializer.save()
+        return Response({"success": "Usuario añadido al grupo correctamente"})
+
+        usuario = request.data.get('user')
+        # Create an user from the above data
+        serializer = SocioSerializer(data=usuario)
+        if serializer.is_valid(raise_exception=True):
+            user_saved = serializer.save()
+        return Response({"success": "User '{}' created successfully".format(user_saved.username), "id" : user_saved.pk})
+
+    def delete(self, request, nombre, pk):
+        instance = get_object_or_404(Grupo.objects.all(), nombre=nombre, idUsuario=pk)
+        instance = Grupo.objects.filter(nombre=nombre, idUsuario = pk)
+        instance.delete()
+        return Response({"message": "Usuario borrado del grupo"},status=204)
+
+
+
+
+
 class SocioView(APIView):
 
     @api_view(['POST'])
@@ -190,7 +238,7 @@ class SocioView(APIView):
             serializer = SocioSerializer(usuario, many=False)
 
         return Response({"User": serializer.data})
-    
+
     def post(self, request):
         usuario = request.data.get('user')
         # Create an user from the above data
@@ -198,7 +246,7 @@ class SocioView(APIView):
         if serializer.is_valid(raise_exception=True):
             user_saved = serializer.save()
         return Response({"success": "User '{}' created successfully".format(user_saved.username), "id" : user_saved.pk})
-    
+
     def put(self, request, pk):
         saved_user = get_object_or_404(User.objects.all(), pk=pk, is_staff=False)
         data = request.data.get('user')
@@ -220,11 +268,11 @@ class FacilitadorView(APIView):
         usernameIntroducido = request.data.get('username')
         passwordIntroducido = request.data.get('password')
 
-        possibleUser = User.objects.filter(username= usernameIntroducido) 
+        possibleUser = User.objects.filter(username= usernameIntroducido)
         if(possibleUser.count() == 1):
             if(possibleUser.get().is_staff and possibleUser.get().check_password(passwordIntroducido)):
                 return Response({"success": "User login successful" })
-        
+
         return Response({"error": "No user found or user is not staff" })
 
     def get(self, request, pk):
@@ -243,7 +291,7 @@ class FacilitadorView(APIView):
         serializer = FacilitadorSerializer(usuario, many=True)
 
         return Response({"User": serializer.data})
-    
+
     def post(self, request):
         usuario = request.data.get('user')
         # Create an user from the above data
@@ -255,7 +303,7 @@ class FacilitadorView(APIView):
             user_saved.save()
 
         return Response({"success": "User '{}' created successfully".format(user_saved.username), "id" : user_saved.pk})
-    
+
     def put(self, request, pk):
         saved_user = get_object_or_404(User.objects.all(), pk=pk, is_staff=True)
         data = request.data.get('user')
@@ -287,13 +335,13 @@ class ActividadUsuarioView(APIView):
         actividades = get_list_or_404(Actividad.objects.all(), idUsuario= pkUsuario, estado=Actividad.NO_ENTREGADO)
         serializer = ActividadSerializer(actividades, many=True)
         return Response({"Actividad": serializer.data})
-    
+
     @api_view(['GET'])
     def actividadesEntregadas(request, pkUsuario):
         actividades = get_list_or_404(Actividad.objects.all(), idUsuario= pkUsuario, estado=Actividad.ENTREGADO)
         serializer = ActividadSerializer(actividades, many=True)
         return Response({"Actividad": serializer.data})
-    
+
     @api_view(['GET'])
     def actividadesRevisadas(request, pkUsuario):
         actividades = get_list_or_404(Actividad.objects.all(), idUsuario= pkUsuario, estado=Actividad.REVISADO)
@@ -326,7 +374,7 @@ class ActividadView(APIView):
         if serializer.is_valid(raise_exception=True):
             actividad_saved = serializer.save()
         return Response({"success": "Actividad with id '{}' created successfully".format(actividad_saved.pk), "id" : actividad_saved.pk})
-    
+
     def put(self, request, pk):
         saved_actividad = get_object_or_404(Actividad.objects.all(), pk=pk)
         data = request.data.get('actividad')
@@ -349,7 +397,7 @@ class ActividadView(APIView):
         elif(estado == 2): actividad.estado=Actividad.REVISADO
         actividad.save()
         return Response({"success": "Actividad with id'{}' updated successfully".format(pk), "id" : actividad.pk})
-        
+
 
 
 class AdjuntadoView(APIView):
@@ -367,7 +415,7 @@ class AdjuntadoView(APIView):
     #     if serializer.is_valid(raise_exception=True):
     #         adjuntado_saved = serializer.save()
     #     return Response({"success": "Adjuntado with id '{}' created successfully".format(adjuntado_saved.pk), "id" : adjuntado_saved.pk})
-    
+
     def delete(self, request, pk):
         # Get object with this pk
         adjuntado = get_object_or_404(Adjuntado.objects.all(), pk=pk)

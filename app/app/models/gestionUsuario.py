@@ -12,6 +12,11 @@ class User(AbstractUser):
 	foto = models.ImageField(upload_to=None, height_field=None, width_field=None, max_length=100, blank=True, null=True)
 	coordinador = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True) #solo los socios, se pone a si mismo
 
+class Grupo(models.Model):
+	nombre = models.CharField(max_length=100)
+	idUsuario = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
 '''
 
 class Profesional(AbstractUser):
@@ -27,11 +32,11 @@ class Profesional(AbstractUser):
 class Usuario(AbstractUser):
 	#nombre = models.CharField(max_length=100)
 	#email = models.EmailField(max_length=100)
-	#password 
+	#password
 	#fechaNacimiento = models.DateField(auto_now=False, auto_now_add=False)
 	foto = models.ImageField(upload_to=None, height_field=None, width_field=None, max_length=100, blank=True)
 	coordinador = models.ForeignKey(Profesional, on_delete=models.CASCADE, blank=True)
-	
+
 	"""ALUMNO = 'Alumno'
 	PROFESIONAL = 'Profesional'
 	OPCIONES = [

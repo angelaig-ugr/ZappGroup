@@ -68,5 +68,11 @@ urlpatterns = [
     path('crearFacilitador/', FacilitadorView.as_view()),
     path('loginFacilitador/', FacilitadorView.loginFacilitador),
 
+    path('grupos/', GrupoView.as_view()),
+    path('grupos/<slug:nombre>', GrupoView.getGrupo),
+    path('crearGrupo', GrupoView.as_view()),
+    path('borrarDeGrupo/<slug:nombre>/<int:pk>', GrupoView.as_view()),
+
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
