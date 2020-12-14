@@ -404,9 +404,7 @@ class AdjuntadoView(APIView):
     def get(self, request, pk):
         adjuntados = get_list_or_404(Adjuntado.objects.all().order_by('fechaCreacion'), idActividad=pk)
         serializer = AdjuntadoSerializer(adjuntados, many=True)
-        if serializer.is_valid(raise_exception=True):
-            actividad_saved = serializer.save()
-        return Response({"success": "Actividad with id'{}' updated successfully".format(pk), "id" : actividad_saved.pk})
+        return Response({"Adjuntado": serializer.data})
 
     # def post(self, request):
     #     adjuntado = request.data.get('adjuntado')
